@@ -59,7 +59,7 @@ async function run() {
         return;
     }
 
-    const branchUrl = github.context.serverUrl + github.context.repo + '/tree/' + github.context.ref.replace('refs/heads/', '');
+    const branchUrl = github.context.serverUrl + github.context.repo.owner + '/' + github.context.repo.repo + '/tree/' + github.context.ref.replace('refs/heads/', '');
 
     await addAttachmentToCard(card, branchUrl);
 }
