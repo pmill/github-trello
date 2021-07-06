@@ -14,6 +14,17 @@ function getCardNumber(input) {
     return ids[ids.length-1].replace('#', '');
 }
 
+async function getAttachments(cardId) {
+    axios.get(`https://api.trello.com/1/cards/${cardId}/attachments`, {
+        params: {
+            key: trelloApiKey,
+            token: trelloAuthToken
+        },
+    }).then(response => {
+        console.log(response.data);
+    })
+}
+
 async function addAttachmentToCard(card, link) {
     console.log(`addAttachmentToCard(${card}, ${link})`);
     let url = `https://api.trello.com/1/cards/${card}/attachments`;
@@ -61,6 +72,7 @@ async function run() {
 
     const branchUrl = github.context.serverUrl + github.context.repo.owner + '/' + github.context.repo.repo + '/tree/' + github.context.ref.replace('refs/heads/', '');
 
+    await getAttachments(card);
     await addAttachmentToCard(card, branchUrl);
 }
 
