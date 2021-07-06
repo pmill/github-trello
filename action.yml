@@ -1,5 +1,5 @@
 author: Peter Millard
-name: github-commit-to-trello-card
+name: pmill/github-trello
 description: GitHub Action to attach GitHub branches to a Trello card
 branding:
   icon: 'check-square'
