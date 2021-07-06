@@ -8993,7 +8993,7 @@ async function getAttachments(cardId) {
             token: trelloAuthToken
         },
     }).then(response => {
-        _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(response.data);
+        _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(JSON.stringify(response.data));
     })
 }
 
