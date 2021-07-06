@@ -15,13 +15,13 @@ function getCardNumber(input) {
 }
 
 async function getAttachments(cardId) {
-    axios.get(`https://api.trello.com/1/cards/${cardId}/attachments`, {
+    return await axios.get(`https://api.trello.com/1/cards/${cardId}/attachments`, {
         params: {
             key: trelloApiKey,
             token: trelloAuthToken
         },
     }).then(response => {
-        console.log(response.data);
+        core.info(response.data);
     })
 }
 
