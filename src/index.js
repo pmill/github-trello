@@ -71,8 +71,9 @@ async function run() {
         return;
     }
 
-    const branchName = github.context.repo.owner + '/' + github.context.repo.repo;
-    const branchUrl = github.context.serverUrl + +'/' + branchName + '/tree/' + github.context.ref.replace('refs/heads/', '');
+    const repoName = github.context.repo.owner + '/' + github.context.repo.repo;
+    const branchName = github.context.ref.replace('refs/heads/', '');
+    const branchUrl = github.context.serverUrl + +'/' + repoName + '/tree/' + branchName;
 
     const attachments = await getAttachments(card);
     core.info(JSON.stringify(attachments));

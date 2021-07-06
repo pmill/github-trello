@@ -9043,8 +9043,9 @@ async function run() {
         return;
     }
 
-    const branchName = _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.repo.owner + '/' + _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.repo.repo;
-    const branchUrl = _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.serverUrl + +'/' + branchName + '/tree/' + _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.ref.replace('refs/heads/', '');
+    const repoName = _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.repo.owner + '/' + _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.repo.repo;
+    const branchName = _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.ref.replace('refs/heads/', '');
+    const branchUrl = _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.serverUrl + +'/' + repoName + '/tree/' + branchName;
 
     const attachments = await getAttachments(card);
     _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(JSON.stringify(attachments));
