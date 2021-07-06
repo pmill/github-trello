@@ -21,7 +21,7 @@ async function getAttachments(cardId) {
             token: trelloAuthToken
         },
     }).then(response => {
-        core.info(response.data);
+        core.info(JSON.stringify(response.data));
     })
 }
 
