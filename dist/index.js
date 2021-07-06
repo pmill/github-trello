@@ -9047,6 +9047,8 @@ async function run() {
     const branchUrl = _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.serverUrl + +'/' + branchName + '/tree/' + _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.ref.replace('refs/heads/', '');
 
     const attachments = await getAttachments(card);
+    _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(JSON.stringify(attachments));
+
     for (const attachment of attachments) {
         if (attachment.name === branchName && attachment.url === branchUrl) {
             return;

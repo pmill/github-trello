@@ -75,6 +75,8 @@ async function run() {
     const branchUrl = github.context.serverUrl + +'/' + branchName + '/tree/' + github.context.ref.replace('refs/heads/', '');
 
     const attachments = await getAttachments(card);
+    core.info(JSON.stringify(attachments));
+
     for (const attachment of attachments) {
         if (attachment.name === branchName && attachment.url === branchUrl) {
             return;
