@@ -21,11 +21,11 @@ async function getAttachments(cardId) {
             token: trelloAuthToken
         },
     }).then(response => {
-        core.info(JSON.stringify(response.data));
+        return response.data;
     })
 }
 
-async function addAttachmentToCard(card, link) {
+async function addAttachmentToCard(card, link, name) {
     console.log(`addAttachmentToCard(${card}, ${link})`);
     let url = `https://api.trello.com/1/cards/${card}/attachments`;
 
@@ -33,6 +33,7 @@ async function addAttachmentToCard(card, link) {
         key: trelloApiKey,
         token: trelloAuthToken,
         url: link,
+        name: name,
     }).then(response => {
         return response.status === 200;
     }).catch(error => {
@@ -70,10 +71,17 @@ async function run() {
         return;
     }
 
-    const branchUrl = github.context.serverUrl + github.context.repo.owner + '/' + github.context.repo.repo + '/tree/' + github.context.ref.replace('refs/heads/', '');
+    const branchName = github.context.repo.owner + '/' + github.context.repo.repo;
+    const branchUrl = github.context.serverUrl + +'/' + branchName + '/tree/' + github.context.ref.replace('refs/heads/', '');
 
-    await getAttachments(card);
-    await addAttachmentToCard(card, branchUrl);
+    const attachments = await getAttachments(card);
+    for (const attachment of attachments) {
+        if (attachment.name === branchName && attachment.url === branchUrl) {
+            return;
+        }
+    }
+
+    await addAttachmentToCard(card, branchUrl, branchName);
 }
 
 run();

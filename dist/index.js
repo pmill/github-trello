@@ -8993,11 +8993,11 @@ async function getAttachments(cardId) {
             token: trelloAuthToken
         },
     }).then(response => {
-        _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(JSON.stringify(response.data));
+        return response.data;
     })
 }
 
-async function addAttachmentToCard(card, link) {
+async function addAttachmentToCard(card, link, name) {
     console.log(`addAttachmentToCard(${card}, ${link})`);
     let url = `https://api.trello.com/1/cards/${card}/attachments`;
 
@@ -9005,6 +9005,7 @@ async function addAttachmentToCard(card, link) {
         key: trelloApiKey,
         token: trelloAuthToken,
         url: link,
+        name: name,
     }).then(response => {
         return response.status === 200;
     }).catch(error => {
@@ -9042,10 +9043,17 @@ async function run() {
         return;
     }
 
-    const branchUrl = _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.serverUrl + _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.repo.owner + '/' + _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.repo.repo + '/tree/' + _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.ref.replace('refs/heads/', '');
+    const branchName = _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.repo.owner + '/' + _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.repo.repo;
+    const branchUrl = _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.serverUrl + +'/' + branchName + '/tree/' + _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.ref.replace('refs/heads/', '');
 
-    await getAttachments(card);
-    await addAttachmentToCard(card, branchUrl);
+    const attachments = await getAttachments(card);
+    for (const attachment of attachments) {
+        if (attachment.name === branchName && attachment.url === branchUrl) {
+            return;
+        }
+    }
+
+    await addAttachmentToCard(card, branchUrl, branchName);
 }
 
 run();
