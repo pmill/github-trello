@@ -8,10 +8,10 @@ const trelloBoardId = core.getInput('trello-board-id', { required: true });
 
 function getCardNumber(input) {
     const ids = input && input.length > 0 ? input.match(/\#\d+/g) : [];
-    if (ids.length === 0) {
+    if (!ids || ids.length === 0) {
         return null;
     }
-    return ids[ids.length-1].replace('#', '');
+    return ids[ids.length - 1].replace('#', '');
 }
 
 async function getAttachments(cardId) {
