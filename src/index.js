@@ -60,33 +60,77 @@ async function getCardOnBoard(board, cardId) {
     });
 }
 
-async function run() {
-    core.info(JSON.stringify(github.context));
-
-    const trelloCardId = github.context.ref ? getCardNumber(github.context.ref) : null;
-    if (!trelloCardId) {
-        return;
-    }
-
-    const card = await getCardOnBoard(trelloBoardId, trelloCardId);
-    if (!card) {
-        return;
-    }
-
-    const repoName = github.context.repo.owner + '/' + github.context.repo.repo;
-    const branchName = github.context.ref.replace('refs/heads/', '');
-    const branchUrl = github.context.serverUrl + '/' + repoName + '/tree/' + branchName;
-
-    const attachments = await getAttachments(card);
+async function doesCardHaveAttachment(cardId, name, url) {
+    const attachments = await getAttachments(cardId);
     core.info(JSON.stringify(attachments));
 
     for (const attachment of attachments) {
-        if (attachment.name === branchName && attachment.url === branchUrl) {
-            return;
+        if (attachment.name === name && attachment.url === url) {
+            return true;
         }
     }
 
-    await addAttachmentToCard(card, branchUrl, branchName);
+    return false
+}
+
+async function getBranch(cardId) {
+    const repoName = github.context.repo.owner + '/' + github.context.repo.repo;
+
+    return {
+        name: github.context.ref.replace('refs/heads/', ''),
+        ur: github.context.serverUrl + '/' + repoName + '/tree/' + name,
+    }
+}
+
+async function getPullRequest(cardId) {
+    return {
+        name: github.context.payload.pull_request.title,
+        ur: github.context.payload.pull_request.html_url,
+    }
+}
+
+async function run() {
+    core.info(JSON.stringify(github.context));
+    let ref = null;
+
+    if (github.context.eventName === 'pull_request') {
+        ref = github.context.payload.pull_request.head.ref;
+    }
+
+    if (github.context.eventName === 'push') {
+        ref = github.context.ref;
+    }
+
+    const cardNumber = getCardNumber(ref);
+    if (!cardNumber) {
+        return;
+    }
+
+    const cardId = await getCardOnBoard(trelloBoardId, cardNumber);
+    if (!cardId) {
+        return;
+    }
+
+    let entity = null;
+
+    if (github.context.eventName === 'pull_request') {
+        entity = await getPullRequest(cardId);
+    }
+
+    if (github.context.eventName === 'push') {
+        entity = await getBranch(cardId);
+    }
+
+    if (!entity) {
+        return;
+    }
+
+    const cardAttachmentExists = await doesCardHaveAttachment(cardId, entity.name, entity.url);
+    if (cardAttachmentExists) {
+        return;
+    }
+
+    await addAttachmentToCard(card, entity.name, entity.url);
 }
 
 run();

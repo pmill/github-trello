@@ -9032,33 +9032,77 @@ async function getCardOnBoard(board, cardId) {
     });
 }
 
-async function run() {
-    _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(JSON.stringify(_actions_github__WEBPACK_IMPORTED_MODULE_2__.context));
-
-    const trelloCardId = _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.ref ? getCardNumber(_actions_github__WEBPACK_IMPORTED_MODULE_2__.context.ref) : null;
-    if (!trelloCardId) {
-        return;
-    }
-
-    const card = await getCardOnBoard(trelloBoardId, trelloCardId);
-    if (!card) {
-        return;
-    }
-
-    const repoName = _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.repo.owner + '/' + _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.repo.repo;
-    const branchName = _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.ref.replace('refs/heads/', '');
-    const branchUrl = _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.serverUrl + '/' + repoName + '/tree/' + branchName;
-
-    const attachments = await getAttachments(card);
+async function doesCardHaveAttachment(cardId, name, url) {
+    const attachments = await getAttachments(cardId);
     _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(JSON.stringify(attachments));
 
     for (const attachment of attachments) {
-        if (attachment.name === branchName && attachment.url === branchUrl) {
-            return;
+        if (attachment.name === name && attachment.url === url) {
+            return true;
         }
     }
 
-    await addAttachmentToCard(card, branchUrl, branchName);
+    return false
+}
+
+async function getBranch(cardId) {
+    const repoName = _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.repo.owner + '/' + _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.repo.repo;
+
+    return {
+        name: _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.ref.replace('refs/heads/', ''),
+        ur: _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.serverUrl + '/' + repoName + '/tree/' + name,
+    }
+}
+
+async function getPullRequest(cardId) {
+    return {
+        name: _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.payload.pull_request.title,
+        ur: _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.payload.pull_request.html_url,
+    }
+}
+
+async function run() {
+    _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(JSON.stringify(_actions_github__WEBPACK_IMPORTED_MODULE_2__.context));
+    let ref = null;
+
+    if (_actions_github__WEBPACK_IMPORTED_MODULE_2__.context.eventName === 'pull_request') {
+        ref = _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.payload.pull_request.head.ref;
+    }
+
+    if (_actions_github__WEBPACK_IMPORTED_MODULE_2__.context.eventName === 'push') {
+        ref = _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.ref;
+    }
+
+    const cardNumber = getCardNumber(ref);
+    if (!cardNumber) {
+        return;
+    }
+
+    const cardId = await getCardOnBoard(trelloBoardId, cardNumber);
+    if (!cardId) {
+        return;
+    }
+
+    let entity = null;
+
+    if (_actions_github__WEBPACK_IMPORTED_MODULE_2__.context.eventName === 'pull_request') {
+        entity = await getPullRequest(cardId);
+    }
+
+    if (_actions_github__WEBPACK_IMPORTED_MODULE_2__.context.eventName === 'push') {
+        entity = await getBranch(cardId);
+    }
+
+    if (!entity) {
+        return;
+    }
+
+    const cardAttachmentExists = await doesCardHaveAttachment(cardId, entity.name, entity.url);
+    if (cardAttachmentExists) {
+        return;
+    }
+
+    await addAttachmentToCard(card, entity.name, entity.url);
 }
 
 run();
