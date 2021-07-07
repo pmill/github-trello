@@ -8997,7 +8997,7 @@ async function getAttachments(cardId) {
     })
 }
 
-async function addAttachmentToCard(card, link, name) {
+async function addAttachmentToCard(card, name, link) {
     let url = `https://api.trello.com/1/cards/${card}/attachments`;
 
     return await axios__WEBPACK_IMPORTED_MODULE_0__.post(url, {
