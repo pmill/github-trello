@@ -9043,6 +9043,8 @@ async function run() {
         return;
     }
 
+    _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(JSON.stringify(_actions_github__WEBPACK_IMPORTED_MODULE_2__.context));
+
     const repoName = _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.repo.owner + '/' + _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.repo.repo;
     const branchName = _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.ref.replace('refs/heads/', '');
     const branchUrl = _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.serverUrl + '/' + repoName + '/tree/' + branchName;

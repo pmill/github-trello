@@ -71,6 +71,8 @@ async function run() {
         return;
     }
 
+    core.info(JSON.stringify(github.context));
+
     const repoName = github.context.repo.owner + '/' + github.context.repo.repo;
     const branchName = github.context.ref.replace('refs/heads/', '');
     const branchUrl = github.context.serverUrl + '/' + repoName + '/tree/' + branchName;
