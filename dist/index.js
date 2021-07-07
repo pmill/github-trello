@@ -8980,10 +8980,10 @@ const trelloBoardId = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput('trell
 
 function getCardNumber(input) {
     const ids = input && input.length > 0 ? input.match(/\#\d+/g) : [];
-    if (ids.length === 0) {
+    if (!ids || ids.length === 0) {
         return null;
     }
-    return ids[ids.length-1].replace('#', '');
+    return ids[ids.length - 1].replace('#', '');
 }
 
 async function getAttachments(cardId) {
@@ -9033,6 +9033,8 @@ async function getCardOnBoard(board, cardId) {
 }
 
 async function run() {
+    _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(JSON.stringify(_actions_github__WEBPACK_IMPORTED_MODULE_2__.context));
+
     const trelloCardId = _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.ref ? getCardNumber(_actions_github__WEBPACK_IMPORTED_MODULE_2__.context.ref) : null;
     if (!trelloCardId) {
         return;
@@ -9042,8 +9044,6 @@ async function run() {
     if (!card) {
         return;
     }
-
-    _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(JSON.stringify(_actions_github__WEBPACK_IMPORTED_MODULE_2__.context));
 
     const repoName = _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.repo.owner + '/' + _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.repo.repo;
     const branchName = _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.ref.replace('refs/heads/', '');

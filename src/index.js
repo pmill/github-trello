@@ -61,6 +61,8 @@ async function getCardOnBoard(board, cardId) {
 }
 
 async function run() {
+    core.info(JSON.stringify(github.context));
+
     const trelloCardId = github.context.ref ? getCardNumber(github.context.ref) : null;
     if (!trelloCardId) {
         return;
@@ -70,8 +72,6 @@ async function run() {
     if (!card) {
         return;
     }
-
-    core.info(JSON.stringify(github.context));
 
     const repoName = github.context.repo.owner + '/' + github.context.repo.repo;
     const branchName = github.context.ref.replace('refs/heads/', '');
