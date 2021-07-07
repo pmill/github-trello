@@ -71,23 +71,23 @@ async function doesCardHaveAttachment(cardId, name, url) {
 }
 
 async function getBranch() {
+    const branchName = github.context.ref.replace('refs/heads/', '');
     const repoName = github.context.repo.owner + '/' + github.context.repo.repo;
 
     return {
-        name: github.context.ref.replace('refs/heads/', ''),
-        ur: github.context.serverUrl + '/' + repoName + '/tree/' + name,
+        name: branchName,
+        url: github.context.serverUrl + '/' + repoName + '/tree/' + branchName,
     }
 }
 
 async function getPullRequest() {
     return {
         name: github.context.payload.pull_request.title,
-        ur: github.context.payload.pull_request.html_url,
+        url: github.context.payload.pull_request.html_url,
     }
 }
 
 async function run() {
-    core.info(JSON.stringify(github.context));
     let ref = null;
 
     if (github.context.eventName === 'pull_request') {

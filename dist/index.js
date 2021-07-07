@@ -9043,23 +9043,23 @@ async function doesCardHaveAttachment(cardId, name, url) {
 }
 
 async function getBranch() {
+    const branchName = _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.ref.replace('refs/heads/', '');
     const repoName = _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.repo.owner + '/' + _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.repo.repo;
 
     return {
-        name: _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.ref.replace('refs/heads/', ''),
-        ur: _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.serverUrl + '/' + repoName + '/tree/' + name,
+        name: branchName,
+        url: _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.serverUrl + '/' + repoName + '/tree/' + branchName,
     }
 }
 
 async function getPullRequest() {
     return {
         name: _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.payload.pull_request.title,
-        ur: _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.payload.pull_request.html_url,
+        url: _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.payload.pull_request.html_url,
     }
 }
 
 async function run() {
-    _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(JSON.stringify(_actions_github__WEBPACK_IMPORTED_MODULE_2__.context));
     let ref = null;
 
     if (_actions_github__WEBPACK_IMPORTED_MODULE_2__.context.eventName === 'pull_request') {
