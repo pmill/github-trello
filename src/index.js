@@ -26,7 +26,6 @@ async function getAttachments(cardId) {
 }
 
 async function addAttachmentToCard(card, link, name) {
-    console.log(`addAttachmentToCard(${card}, ${link})`);
     let url = `https://api.trello.com/1/cards/${card}/attachments`;
 
     return await axios.post(url, {
@@ -43,8 +42,6 @@ async function addAttachmentToCard(card, link, name) {
 }
 
 async function getCardOnBoard(board, cardId) {
-    console.log(`getCardOnBoard(${board}, ${cardId})`);
-
     const url = `https://trello.com/1/boards/${board}/cards/${cardId}`
 
     return await axios.get(url, {
@@ -73,7 +70,7 @@ async function doesCardHaveAttachment(cardId, name, url) {
     return false
 }
 
-async function getBranch(cardId) {
+async function getBranch() {
     const repoName = github.context.repo.owner + '/' + github.context.repo.repo;
 
     return {
@@ -82,7 +79,7 @@ async function getBranch(cardId) {
     }
 }
 
-async function getPullRequest(cardId) {
+async function getPullRequest() {
     return {
         name: github.context.payload.pull_request.title,
         ur: github.context.payload.pull_request.html_url,
@@ -114,11 +111,11 @@ async function run() {
     let entity = null;
 
     if (github.context.eventName === 'pull_request') {
-        entity = await getPullRequest(cardId);
+        entity = await getPullRequest();
     }
 
     if (github.context.eventName === 'push') {
-        entity = await getBranch(cardId);
+        entity = await getBranch();
     }
 
     if (!entity) {
@@ -130,7 +127,7 @@ async function run() {
         return;
     }
 
-    await addAttachmentToCard(card, entity.name, entity.url);
+    await addAttachmentToCard(cardId, entity.name, entity.url);
 }
 
 run();

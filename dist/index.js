@@ -8998,7 +8998,6 @@ async function getAttachments(cardId) {
 }
 
 async function addAttachmentToCard(card, link, name) {
-    console.log(`addAttachmentToCard(${card}, ${link})`);
     let url = `https://api.trello.com/1/cards/${card}/attachments`;
 
     return await axios__WEBPACK_IMPORTED_MODULE_0__.post(url, {
@@ -9015,8 +9014,6 @@ async function addAttachmentToCard(card, link, name) {
 }
 
 async function getCardOnBoard(board, cardId) {
-    console.log(`getCardOnBoard(${board}, ${cardId})`);
-
     const url = `https://trello.com/1/boards/${board}/cards/${cardId}`
 
     return await axios__WEBPACK_IMPORTED_MODULE_0__.get(url, {
@@ -9045,7 +9042,7 @@ async function doesCardHaveAttachment(cardId, name, url) {
     return false
 }
 
-async function getBranch(cardId) {
+async function getBranch() {
     const repoName = _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.repo.owner + '/' + _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.repo.repo;
 
     return {
@@ -9054,7 +9051,7 @@ async function getBranch(cardId) {
     }
 }
 
-async function getPullRequest(cardId) {
+async function getPullRequest() {
     return {
         name: _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.payload.pull_request.title,
         ur: _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.payload.pull_request.html_url,
@@ -9086,11 +9083,11 @@ async function run() {
     let entity = null;
 
     if (_actions_github__WEBPACK_IMPORTED_MODULE_2__.context.eventName === 'pull_request') {
-        entity = await getPullRequest(cardId);
+        entity = await getPullRequest();
     }
 
     if (_actions_github__WEBPACK_IMPORTED_MODULE_2__.context.eventName === 'push') {
-        entity = await getBranch(cardId);
+        entity = await getBranch();
     }
 
     if (!entity) {
@@ -9102,7 +9099,7 @@ async function run() {
         return;
     }
 
-    await addAttachmentToCard(card, entity.name, entity.url);
+    await addAttachmentToCard(cardId, entity.name, entity.url);
 }
 
 run();
